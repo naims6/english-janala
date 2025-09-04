@@ -119,16 +119,61 @@
         <span class="text-sky-500">Let's</span> Learn Vocabularies
       </h1>
 
-      <div class="flex items-center justify-center mt-8 gap-5 px-4">
-        <button class="btn btn-outline btn-primary">Primary</button>
-        <button class="btn btn-outline btn-primary">Primary</button>
+      <div
+        class="lesson-btn-container flex flex-wrap items-center justify-center mt-8 gap-5 px-4"
+      >
+        <!-- <button class="btn btn-outline btn-primary">Primary</button> -->
       </div>
 
-      <div class="bg-gray-100 py-10 mt-6 text-center">
-        <p class="mb-5 text-sm">আপনি এখনো কোন Lesson Select করেন ন</p>
-        <h1 class="text-3xl text-gray-800">একটি Lesson Select করুন।</h1>
+      <div class="lesson-word mt-10">
+        <div
+          class="word-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-center gap-5"
+        >
+          <div
+            class="empty-lesson col-span-full bg-gray-100 py-10 mt-6 text-center"
+          >
+            <p class="mb-5 text-sm">আপনি এখনো কোন Lesson Select করেন ন</p>
+            <h1 class="text-3xl text-gray-800">একটি Lesson Select করুন।</h1>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- <dialog id="my_modal_3" class="modal">
+      <div class="modal-box">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+        </form>
+
+        <div class="space-y-5">
+          <h1 class="font-bold text-2xl">Eager( <i class="fa-solid fa-microphone"></i> : Igar)</h1>
+
+        <p class="mb-3"
+          <span class="font-semibold text-base mb-2">Meaning</span> <br>
+          <span>agrohi</span>
+        </p>
+        <p class="mb-3">
+          <span class="font-semibold text-base mb-2">Example</span> <br>
+          <span>The kids were eager to open their gifts</span>
+        </p>
+
+        <p class="mb-3">
+          <span class="font-semibold text-base mb-2">Somarthok sobdo</span>
+          <div class="space-x-3">
+            <button class="btn">Enthuasiat</button>
+            <button class="btn">Enthuasiat</button>
+            <button class="btn">Enthuasiat</button>
+          </div>
+        </p>
+
+        <button class="btn btn-primary">Complete Learning</button>
+        </div>
+      </div>
+    </dialog> -->
     <!-- faq section -->
     <section class="faq container mx-auto mb-8 px-4">
       <h1 class="text-3xl font-bold text-center">
@@ -191,6 +236,7 @@
       </div>
     </section>
 
+    <dialog id="my_modal_3" class="modal"></dialog>
     <!-- footer  -->
     <footer
       class="container mx-auto flex flex-col md:flex-row items-center justify-between py-10"
