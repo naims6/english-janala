@@ -115,20 +115,32 @@
     </section>
     <!-- lesson section -->
     <section class="lesson container mx-auto mb-8 mt-6">
+      <!-- lesson title  -->
       <h1 class="font-bold text-3xl text-center">
         <span class="text-sky-500">Let's</span> Learn Vocabularies
       </h1>
 
+      <!-- button of lesson  -->
       <div
         class="lesson-btn-container flex flex-wrap items-center justify-center mt-8 gap-5 px-4"
       >
-        <!-- <button class="btn btn-outline btn-primary">Primary</button> -->
+        <!-- button will be fethed here from api -->
+      </div>
+
+      <!-- search word inpu form -->
+      <div class="join flex justify-center mt-10">
+        <input
+          class="search-input input join-item"
+          placeholder="Search Any Word"
+        />
+        <button class="search-btn btn join-item rounded-r-full">Search</button>
       </div>
 
       <div class="lesson-word mt-10">
         <div
-          class="word-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-center gap-5"
+          class="word-card mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-center gap-5"
         >
+          <!-- default text in word card  -->
           <div
             class="empty-lesson col-span-full bg-gray-100 py-10 mt-6 text-center"
           >

@@ -1,3 +1,9 @@
+function removeActive() {
+  console.log("removing");
+  let lessonBtn = document.querySelectorAll(".lesson-btn");
+  lessonBtn.forEach((item) => item.classList.remove("active"));
+}
+
 function showLesson(data) {
   let lessonBtnContainer = document.querySelector(".lesson-btn-container");
 
@@ -8,7 +14,7 @@ function showLesson(data) {
   let lessonBtn = document.querySelectorAll(".lesson-btn");
   lessonBtn.forEach((item) => {
     item.addEventListener("click", () => {
-      lessonBtn.forEach((item) => item.classList.remove("active"));
+      removeActive();
       item.classList.add("active");
       return loadLessonWord(`${item.id}`);
     });
@@ -17,7 +23,6 @@ function showLesson(data) {
 
 function showLessonWord(data) {
   let wordCard = document.querySelector(".word-card");
-  console.log(data);
   wordCard.innerHTML = "";
 
   if (!data.length) {
@@ -25,14 +30,15 @@ function showLessonWord(data) {
      <div
             class="no-lesson-card bg-gray-100 col-span-full py-10 text-center space-y-5"
           >
-            <img class="mx-auto" src="./assets/alert-error.png" alt="" />
+            <img class="mx-auto size-32" src="./assets/alert-error.png" alt="" />
             <p class="text-gray-600 text-sm">
               এই Lesson এ এখনো কোন Vocabulary যুক্ত করা হয়নি।
             </p>
             <h2 class="text-3xl">নেক্সট Lesson এ যান</h2>
           </div>
     `;
-    console.log("hello");
+    showLoadingSpinner(false);
+
     return;
   }
   wordCard.innerHTML = data
@@ -45,37 +51,32 @@ function showLessonWord(data) {
               <p onclick="loadModals('${item.id}')" class="size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
                 <i  class="fa-solid fa-circle-info"></i>
               </p>
-              <p class="size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
+              <p onclick="speakWord('${item.word}')" class="size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
                 <i class="fa-solid fa-record-vinyl"></i>
               </p>
             </div>
           </div>`;
     })
     .join(" ");
+
+  showLoadingSpinner(false);
 }
-// meaning
-// :
-// "আগ্রহী"
-// partsOfSpeech
-// :
-// "adjective"
-// points
-// :
-// 1
-// pronunciation
-// :
-// "ইগার"
-// sentence
-// :
-// "The kids were eager to open their gifts."
-// synonyms
-// :
-// (3) ['enthusiastic', 'excited', 'keen']
-// word
-// :
-// "Eager"
+
+function speakWord(word) {
+  const utter = new SpeechSynthesisUtterance(word);
+  window.speechSynthesis.speak(utter);
+}
+
+function addSynonyms(syn) {
+  let synBtn = syn
+    .map((item) => {
+      return `<button class="btn">${item}</button>`;
+    })
+    .join(" ");
+  return synBtn;
+}
+
 function showModals(data) {
-  console.log(data);
   document.querySelector("#my_modal_3").innerHTML = "";
   let div = document.createElement("div");
   div.innerHTML = `
@@ -89,12 +90,9 @@ function showModals(data) {
             </form>
 
             <div class="space-y-5">
-              <h1 class="font-bold text-2xl">${data.word}( <i class="fa-solid fa-microphone"></i> : ${data.meaning})</h1>
-
-            <p class="mb-3"
-              <span class="font-bold text-base mb-3">Meaning</span> <br>
-              <span>${data.meaning}</span>
-            </p>
+              <h1 class="font-bold text-2xl">${
+                data.word
+              }( <i class="fa-solid fa-microphone"></i> : ${data.meaning})</h1>
             <p class="mb-3">
               <span class="font-bold text-base mb-3">Meaning</span> <br>
               <span>${data.meaning}</span>
@@ -107,30 +105,40 @@ function showModals(data) {
             <p class="mb-3">
               <span class="font-bold text-base mb-3">Somarthok sobdo</span>
               <div class="space-x-2">
-                <button class="btn">Enthuasiat</button>
-                <button class="btn">Enthuasiat</button>
-                <button class="btn">Enthuasiat</button>
+              ${addSynonyms(data.synonyms)}
               </div>
-            </p>
+            </p> <br>
 
-            <button class="btn btn-primary">Complete Learning</button>
+            <button onclick="closeModal('#my_modal_3')" class="btn btn-primary">Complete Learning</button>
             </div>
           </div>
 
   `;
 
   document.querySelector("#my_modal_3").appendChild(div);
-  document.querySelector("#my_modal_3").showModal();
+  document.querySelector("#my_modal_3").show();
+}
+
+function closeModal(id) {
+  document.querySelector(id).close();
+}
+
+function showLoadingSpinner(status) {
+  let wordCard = document.querySelector(".word-card");
+  if (status) {
+    wordCard.innerHTML = `<div class="col-span-full text-center"><span class="loading loading-bars loading-xl"></span></div> `;
+  }
 }
 
 function loadModals(id) {
-  console.log(id);
   let url = `https://openapi.programming-hero.com/api/word/${id}`;
   fetch(url)
     .then((res) => res.json())
     .then((json) => showModals(json.data));
 }
+
 function loadLessonWord(id) {
+  showLoadingSpinner(true);
   let url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
@@ -145,17 +153,31 @@ function loadLesson() {
     });
 }
 
+document.querySelector(".search-btn").addEventListener("click", () => {
+  let inputValue = document
+    .querySelector(".search-input")
+    .value.trim()
+    .toLowerCase();
+  let url = "https://openapi.programming-hero.com/api/words/all";
+
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      let allWords = data.data;
+
+      let filterWords = allWords.filter((word) =>
+        word.word.toLowerCase().includes(inputValue)
+      );
+      removeActive();
+      showLessonWord(filterWords);
+    });
+});
+// close modal when user click outside of the main div
+document.addEventListener("click", (e) => {
+  let dialogContainer = e.target.closest(".modal-box");
+  if (!dialogContainer) {
+    document.querySelector("#my_modal_3").close();
+  }
+});
+
 loadLesson();
-// <!-- You can open the modal using ID.showModal() method -->
-// <button class="btn" onclick="my_modal_3.showModal()">open modal</button>
-{
-  //    <dialog id="my_modal_3" class="modal">
-  //   <div class="modal-box">
-  //     <form method="dialog">
-  //       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-  //     </form>
-  //     <h3 class="text-lg font-bold">Hello!</h3>
-  //     <p class="py-4">Press ESC key or click on ✕ button to close</p>
-  //   </div>
-  // </dialog>
-}
