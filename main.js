@@ -181,3 +181,20 @@ document.addEventListener("click", (e) => {
 });
 
 loadLesson();
+
+// Faq section
+let allQuestion = document.querySelectorAll(".question");
+let allAnswer = document.querySelectorAll(".answer");
+
+allQuestion.forEach((question) => {
+  question.addEventListener("click", (e) => {
+    let clickedQuestion = e.target.closest(".question");
+    allAnswer.forEach((answer) => {
+      answer.classList.add("hidden");
+    });
+    if (clickedQuestion) {
+      let clickedAnswer = clickedQuestion.lastElementChild;
+      clickedAnswer.classList.remove("hidden");
+    }
+  });
+});
