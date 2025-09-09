@@ -1,10 +1,8 @@
 // =========================
 // Utility Functions
 // =========================
-
 // Remove 'active' class from all lesson buttons
 function removeActive() {
-  console.log("Removing active classes...");
   document
     .querySelectorAll(".lesson-btn")
     .forEach((btn) => btn.classList.remove("active"));
@@ -68,8 +66,8 @@ function loadLesson() {
 // =========================
 
 // Render all words in card format
+const wordCard = document.querySelector(".word-card");
 function showLessonWord(words) {
-  const wordCard = document.querySelector(".word-card");
   wordCard.innerHTML = "";
 
   if (!words.length) {
@@ -92,10 +90,10 @@ function showLessonWord(words) {
         <p class="font-medium">Meaning/Pronunciation</p>
         <span class="text-xl font-bold">${word.meaning} / ${word.pronunciation}</span>
         <div class="flex justify-between items-center mt-5 text-gray-700">
-          <p onclick="loadModals('${word.id}')" class="size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
+          <p onclick="loadModals('${word.id}')" class=" size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
             <i class="fa-solid fa-circle-info"></i>
           </p>
-          <p onclick="speakWord('${word.word}')" class="size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
+          <p data-word="${word.word}" class="speak-word size-12 p-2.5 bg-sky-200 rounded-full text-center cursor-pointer">
             <i class="fa-solid fa-record-vinyl"></i>
           </p>
         </div>
@@ -116,10 +114,37 @@ function loadLessonWord(id) {
 }
 
 // Speak a given word
-function speakWord(word) {
-  const utter = new SpeechSynthesisUtterance(word);
-  window.speechSynthesis.speak(utter);
+
+function debounce(func, delay) {
+  let timer;
+  return function (e) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(e), delay);
+  };
 }
+
+function speadk(e) {
+  let clickedBtn = e.target.closest(".speak-word");
+  if (!clickedBtn) return;
+
+  if (clickedBtn.classList.contains("speak-word")) {
+    let word = clickedBtn.dataset.word;
+    const utter = new SpeechSynthesisUtterance(word);
+    window.speechSynthesis.speak(utter);
+  }
+}
+
+wordCard.addEventListener("click", debounce(speadk, 500));
+console.log(Date.now());
+// let clickedBtn = e.target.closest(".speak-word");
+// if (!clickedBtn) return;
+
+// if (clickedBtn.classList.contains("speak-word")) {
+//   let word = clickedBtn.dataset.word;
+//   const utter = new SpeechSynthesisUtterance(word);
+//   window.speechSynthesis.speak(utter);
+//   console.log("speaked");
+// }
 
 // =========================
 // Modal Functions
@@ -167,23 +192,30 @@ function loadModals(id) {
 // =========================
 // Search Functionality
 // =========================
+let allWords;
 
-document.querySelector(".search-btn").addEventListener("click", () => {
-  const query = document
-    .querySelector(".search-input")
-    .value.trim()
-    .toLowerCase();
-  fetch("https://openapi.programming-hero.com/api/words/all")
-    .then((res) => res.json())
-    .then((data) => {
-      const filtered = data.data.filter((word) =>
-        word.word.toLowerCase().includes(query)
-      );
-      removeActive();
-      showLessonWord(filtered);
+fetch("https://openapi.programming-hero.com/api/words/all")
+  .then((res) => res.json())
+  .then((data) => {
+    allWords = data.data;
+  });
+
+const searchWord = () => {
+  document.querySelector(".search-btn").addEventListener("click", () => {
+    const query = document
+      .querySelector(".search-input")
+      .value.trim()
+      .toLowerCase();
+
+    let filtered = allWords.filter((word) => {
+      return word.word.toLowerCase().includes(query);
     });
-});
-
+    console.log(filtered);
+    removeActive();
+    showLessonWord(filtered);
+  });
+};
+searchWord();
 // =========================
 // Event Listeners
 // =========================
